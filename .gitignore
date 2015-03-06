@@ -14,7 +14,9 @@
 *.pmd
 
 *.project
+/*/.settings/*/*.*
 
+*.tmp
 /*/gen/*.*
 /*/gen/*/*.*
 /*/tmp/*.*
@@ -24,6 +26,9 @@ ogvic.properties
 build-javadoc.xml
 target
 bin
-/build/editing/*.ttl
-!/build/editing/*.template.ttl
+/*/editing/*.ttl
+!/*/editing/*.template.ttl
 /oldscripts
+
+*.iml
+.idea

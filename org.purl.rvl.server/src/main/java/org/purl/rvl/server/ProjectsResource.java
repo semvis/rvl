@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +24,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.ontoware.rdf2go.Reasoning;
+import org.ontoware.rdf2go.model.Model;
+import org.ontoware.rdf2go.model.Syntax;
 import org.purl.rvl.exception.D3GeneratorException;
 import org.purl.rvl.exception.OGVICModelsException;
 import org.purl.rvl.exception.OGVICRepositoryException;
+import org.purl.rvl.tooling.avm2d3.GraphicType;
 import org.purl.rvl.tooling.codegen.rdfreactor.OntologyFile;
+import org.purl.rvl.tooling.commons.FileRegistry;
 import org.purl.rvl.tooling.commons.utils.FileResourceUtils;
-import org.purl.rvl.tooling.process.ExampleData;
+import org.purl.rvl.tooling.model.ModelManager;
 import org.purl.rvl.tooling.process.OGVICProcess;
 import org.purl.rvl.tooling.process.VisProject;
 import org.purl.rvl.tooling.process.VisProjectLibraryExamples;
@@ -100,26 +104,34 @@ public class ProjectsResource {
 	}
 	
 	@POST
-	@Produces(MediaType.APPLICATION_XML)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Path("/run")
 	public Response runNewVisProject(
-			@FormParam("id") String id,
-			@FormParam("data") String data,
-			@FormParam("mappings") String mappings,
-			@FormParam("stay") String stay,
+			@FormDataParam("id") String id,
+			@FormDataParam("graphicType") String graphicType,
+			@FormDataParam("data") String data,
+			@FormDataParam("mappings") String mappings,
 			@Context HttpServletResponse servletResponse
 			)
 			throws IOException, URISyntaxException {
 		
-		System.out.println("Running new project " + id);
+		System.out.println("Running new posted project ");
+		//System.out.println("Running new project " + id);
 
+		//return Response.status(Status.OK).entity("<html><body>Some content</body></html>").build();
+		//return Response.status(Status.OK).entity("{\"some message\" : \"test\"}").build();
+		
+		
+		
 		if (id == null || id.isEmpty()) {
-			return Response.status(Status.BAD_REQUEST).entity("<message>ID is required.</message>").build();
+			return Response.status(Status.BAD_REQUEST).entity("{'message' : 'ID is required'}").build();
 		} 
 		
 		VisProject project = new VisProject(id);
 		project.setReasoningDataModel(Reasoning.rdfs);
+		project.setDefaultGraphicType(graphicType);
 		
 		if (data != null) {
 			File newTmpDataFile = saveToTempFile(data);
@@ -134,8 +146,23 @@ public class ProjectsResource {
 		
 		System.out.println("Created new project " + project.getId());
 		
-		runProject(project.getId());
+		String jsonResult = "";
+		try {
+			jsonResult = runProject(project.getId());
+		} catch (OGVICRepositoryException e) {
+			e.printStackTrace();
+			return Response.status(Status.EXPECTATION_FAILED).build();
+			// TODO correct return status?
+		}
 
+		if (jsonResult.isEmpty()) {
+			return Response.status(Status.NO_CONTENT).build();
+		} else {
+			System.out.println(jsonResult);		
+			return Response.status(Status.OK).entity(jsonResult).build();
+		}
+		
+		/*
 		if (null != stay && stay.equals("on")) {
 			// just stay on the page, don't show any new content
 			return Response.status(Status.NO_CONTENT).build();
@@ -145,6 +172,7 @@ public class ProjectsResource {
 			System.out.println("Redirecting to " + redirectTo);
 			return Response.seeOther(redirectTo).build();		
 		}
+		*/
 			
 //		code below only works when servlets are available:
 //		"When deploying a JAX-RS application using servlet then ServletConfig, ServletContext, HttpServletRequest and HttpServletResponse are available using @Context. " taken from: 
@@ -173,12 +201,60 @@ public class ProjectsResource {
 	@Path("/run/{id}")
     public String runVisProject(@PathParam("id") String id, @Context HttpServletResponse servletResponse) {
 		
-		System.out.println("/run/" + id);
+		//System.out.println("/run/" + id);
 		
-		String jsonResult = runProject(id);
+		String jsonResult;
+		try {
+			jsonResult = runProject(id);
+		} catch (OGVICRepositoryException e) {
+			jsonResult =  "";
+			e.printStackTrace();
+		}
 		
-		if (null == servletResponse) {
-			System.out.println("servlet response was null");
+//		if (null == servletResponse) {
+//			System.out.println("servlet response was null");
+//		}
+		
+		return jsonResult;
+    }
+	
+	@GET
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
+	@Path("/run/external")
+    public String runExternalEditingProject(@Context HttpServletResponse servletResponse) {
+
+		String jsonResult;
+		try {
+			jsonResult = runExternalEditingProject(GraphicType.FORCE_DIRECTED_GRAPH);
+		} catch (OGVICRepositoryException e) {
+			jsonResult =  e.getMessage();
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			jsonResult =  e.getMessage();
+			e.printStackTrace();
+		}
+		
+//		if (null == servletResponse) {
+//			System.out.println("servlet response was null");
+//		}
+		
+		return jsonResult;
+    }
+	
+	@GET
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
+	@Path("/run/external/{graphicType}")
+    public String runExternalEditingProject(@PathParam("graphicType") String graphicType, @Context HttpServletResponse servletResponse) {
+
+		String jsonResult;
+		try {
+			jsonResult = runExternalEditingProject(graphicType);
+		} catch (OGVICRepositoryException e) {
+			jsonResult =  e.getMessage();
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			jsonResult =  e.getMessage();
+			e.printStackTrace();
 		}
 		
 		return jsonResult;
@@ -192,7 +268,13 @@ public class ProjectsResource {
 		
 		System.out.println("/run/latest");
 		
-		String jsonResult = OGVICProcess.getInstance().getGeneratedD3json();
+		String jsonResult;
+		try {
+			jsonResult = OGVICProcess.getInstance().getGeneratedD3json();
+		} catch (OGVICRepositoryException e) {
+			jsonResult =  "";
+			e.printStackTrace();
+		}
 		
 		System.out.println(jsonResult);
 		
@@ -222,6 +304,64 @@ public class ProjectsResource {
 			return "# example mappings could not be found.";
 		}
     }
+	
+	@GET
+    @Produces({MediaType.TEXT_PLAIN})
+	@Path("/mappingmodel/{id}")
+    public String getMappingModel(@PathParam("id") String id) throws OGVICRepositoryException {
+		
+		ModelManager modelManager = ModelManager.getInstance();
+		VisProject project = VisProjectLibraryExamples.getInstance().getProject(id);
+		
+		//FileRegistry mfr = project.getMappingFileRegistry();
+
+		modelManager.initInternalModels(); // TODO refaktor? actually only RVL model is required here
+		modelManager.initMappingsModel(project.getMappingFileRegistry());
+		
+		Model model = modelManager.getMappingsModel();
+		
+		return model.serialize(Syntax.Turtle);
+		//return "requested mapping model for project " + id;
+    }
+	
+	// TODO, HACK: we assume here, there is only one file!
+	@GET
+    @Produces({MediaType.TEXT_PLAIN})
+	@Path("/mappingfile/{id}")
+    public String getMappingFile(@PathParam("id") String id) throws OGVICRepositoryException, IOException {
+		
+		VisProject project = VisProjectLibraryExamples.getInstance().getProject(id);
+		FileRegistry mfr = project.getMappingFileRegistry();
+		File mappingFile = mfr.getFiles().iterator().next();
+
+		if (null==mappingFile) {
+			throw new OGVICRepositoryException();
+		}
+		
+		final String mappingFilePath = mappingFile.getPath();
+		final String mappingFileContent = FileResourceUtils.getFromWithinJarsAsString(mappingFilePath);
+		
+		return mappingFileContent 
+				//; 
+				+ System.lineSeparator() + System.lineSeparator() 
+				+ "# this mapping file was loaded from: " 
+				+ mappingFilePath + "(" + mappingFile.getAbsolutePath() + ")";
+	    }
+	
+	@GET
+    @Produces({MediaType.TEXT_PLAIN})
+	@Path("/datamodel/{id}")
+    public String getDataModel(@PathParam("id") String id) throws OGVICRepositoryException {
+		
+		ModelManager modelManager = ModelManager.getInstance();
+		VisProject project = VisProjectLibraryExamples.getInstance().getProject(id);
+
+		modelManager.initDataModel(project.getDataFileRegistry(), project.getReasoningDataModel());
+		
+		Model model = modelManager.getDataModel();
+		
+		return model.serialize(Syntax.Turtle);
+    }
 
 
 
@@ -235,7 +375,7 @@ public class ProjectsResource {
 	}
 	
 	
-	private String runProject(String id) {
+	private String runProject(String id) throws OGVICRepositoryException {
 	
 		OGVICProcess process = OGVICProcess.getInstance();
 	
@@ -269,6 +409,52 @@ public class ProjectsResource {
 			json = process.getGeneratedD3json();
 		} catch (Exception e) {
 			// TODO: handle exception
+		}
+	
+		return json;
+	}
+
+	private String runExternalEditingProject(String defaultGraphicType) throws FileNotFoundException, OGVICRepositoryException {
+	
+		String json;
+		OGVICProcess process = OGVICProcess.getInstance();
+	
+		process.registerOntologyFile(OntologyFile.VISO_GRAPHIC);
+		process.registerOntologyFile(OntologyFile.RVL);
+		
+		VisProject project = new VisProject("external-editing-test");
+		project.setReasoningDataModel(Reasoning.rdfs);
+		project.registerDataFile("editing/data.ttl");
+		project.registerMappingFile("editing/mapping.ttl");
+		project.setDefaultGraphicType(defaultGraphicType);
+		
+		// load from optional files
+		try {
+			project.registerDataFile("editing/ontology.ttl");
+		} catch (FileNotFoundException e) {}
+		try {
+			project.registerMappingFile("/example-commons/rvl-example-commons.ttl");
+		} catch (FileNotFoundException e) {}
+		
+		try {
+			process.loadProject(project);
+		} catch (OGVICRepositoryException e) {
+			json = e.getMessage();
+			e.printStackTrace();
+		}
+	
+		try {
+			process.runOGVICProcess();
+		} catch (D3GeneratorException | OGVICModelsException e) {
+			json = e.getMessage();
+			e.printStackTrace();
+		}
+
+		try {
+			json = process.getGeneratedD3json();
+		} catch (Exception e) {
+			json = e.getMessage();
+			e.printStackTrace();
 		}
 	
 		return json;
