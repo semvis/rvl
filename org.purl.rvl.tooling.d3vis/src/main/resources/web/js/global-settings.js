@@ -6,8 +6,8 @@
 var drawLinks = true; // choose whether only nodes should be drawn and layouted
 
 // labeling
-var complexLabeling = true; // may be overridden by graphic loading functions
-var simpleLabeling = false; // may be overridden by graphic loading functions
+var complexLabeling = false; // may be overridden by graphic loading functions
+var simpleLabeling = true; // may be overridden by graphic loading functions
 var alignedConnectorLabeling = false; 
 
 var NODE_SIZE; // TODO D3 symbol functions consider area using Math.sqrt(). Area of svg symbols in use elements is simply width*height
@@ -24,6 +24,8 @@ var width = 900,
 
 var BASE_PATH_SVG_FILE = "../../svg/symbols.svg#";
 
+var baseUrlBackend = "http://localhost:8080/semvis/";
+
 
 /******************************/
 /* GLOBAL "MEMBER" VARS       */
@@ -34,4 +36,5 @@ var BASE_PATH_SVG_FILE = "../../svg/symbols.svg#";
 var svg;
 var vis;
 var labelContainerSpace;
+var currentGraphicType = "force-directed-graph";
         
