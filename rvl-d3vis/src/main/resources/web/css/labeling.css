@@ -1,0 +1,75 @@
+div.labelContainerContainer, div.labelContainer {
+	/*border:1px dotted green;*/
+	position:absolute;
+	padding:0px;
+	margin:0px;
+	pointer-events: none;
+}
+
+div.labelContainer {
+   /*border:1px dotted blue;*/
+}
+
+.label {
+    border-color:red;
+	/*margin:-10px;*/ /* will be set by JS */
+}
+
+#labelContainerSpace {
+	position:absolute;
+	z-index: 2000;
+    /*border:1px dotted green;*/
+    pointer-events: none;
+	
+}
+
+/*
+#svgSpace {
+	position:absolute;
+	z-index: 1;
+}*/
+
+.svgLabelIcon {
+	/*background-color: green;*/
+	/*opacity: 0.5;*/
+	top:0px;
+	left:0px;
+	overflow: visible; /* ignored by webkit, see this bug : https://bugs.webkit.org/show_bug.cgi?id=96163 ; leads to some cropping of the symbols */
+}
+
+.svgLabelText{
+	/*background-color: yellow;*/
+	top:0px;
+	left:0px;
+	overflow: visible; /* ignored by webkit, see this bug : https://bugs.webkit.org/show_bug.cgi?id=96163 ; leads to some cropping of the symbols */
+}
+
+.svgLabelText text.nodeLabelShadow {
+    stroke: white;
+    stroke-width: 4px;
+    stroke-opacity: .8;
+}
+
+.svgLabelIcon path {
+	/*filter:url(#blur-effect-2);*/ /* problems in firefox, when not in one html page? */
+}
+
+.htmlTextLabel {
+	padding: 2px;
+	color:grey;
+	/*-webkit-filter: invert(100%); */ /*firefox does not yet support this */
+	/*background-color: green;*/
+	font-family: Arial;
+  	font-size: 12px;
+	max-height: 150px;
+	min-width: 50px; 
+	width:100%; /* change to 0px or 5px allow for correct positiong of text */
+	/*height:100%; */ /* do not set. otherwise text will be top-aligned */
+	word-wrap:break-word;
+}
+
+/* text that labels icons should have the same same height as the icon */
+.iconLabelText {
+	/*font-size: 20px;*/
+}
+
