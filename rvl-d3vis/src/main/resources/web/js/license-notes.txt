@@ -1,0 +1,4 @@
+All copyrights for the D3.js library belong to Mike Bostock. http://d3js.org/
+All copyrights for the jquery library belong to the jQuery Foundation, Inc. http://jquery.org/license/
+
+See the file "license-notes" in the root folder for licensing information on the other libraries.

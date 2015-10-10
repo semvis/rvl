@@ -1,0 +1,64 @@
+body {
+/* 	background-color: white; */
+/* 	background-image: linear-gradient(to right, #444, #555, #666, #666, #666, #666, #666); */
+}
+
+body, #editor {
+	background-color: #444;
+/* 	background-color: #4ba614; */
+/* 	background-image: linear-gradient(to bottom, #4ba614, #008c00); */ /* Does not work, since BG has not 100% height. */
+	color: #eee;
+}
+
+#svg {
+	/*background-color: white;*/
+}
+
+div.infotext {
+	background-image: linear-gradient(to top, #444, #555);
+ 	color: #ddd; 
+ 	line-height: 1.3em;
+}
+
+a, a:visited {
+	color: #ddd;
+}
+
+a:hover {
+	color: #ccc;
+}
+
+
+/* set to whatever the body-background-color is */
+.svgSymbol, .packedCircle {
+	stroke: #fff;
+   	fill: #666;
+}
+
+circle.node.highlighted.identical,
+.node.highlighted path,
+.node.highlighted circle {
+	stroke: #ffe900;
+}
+
+.node.highlighted.identical path,
+.node.highlighted.identical circle {
+	stroke: #ffe900;
+}
+
+.linking_connector {
+    stroke-opacity: .65;
+}
+
+.linking_connector.highlighted {
+	stroke-opacity: 1;
+    stroke: #ffe900 ! important;
+}
+
+.label {
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+}
+
+marker#uml_generalization_arrow {
+	fill: #fff;
+}

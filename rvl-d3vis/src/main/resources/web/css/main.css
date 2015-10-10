@@ -1,0 +1,312 @@
+/* GENERAL STYLES */
+
+body {
+/* 	background-color: #ccc; */
+  	font-family: Arial, sans-serif;
+	font-size: 0.9em;
+	color: #888;
+}
+
+a, a:visited {
+	color: #888;
+}
+
+a:hover {
+	color:white;
+}
+
+#svg { 
+	/*background-color: #334;*/
+}
+
+select, #menu button, #editor input {
+	font-size: 0.9em;
+	margin-top: 2px;
+	margin-bottom: 5px;
+}
+
+#menu input {
+	margin-left: 0px;
+	margin-right: 10px;
+}
+
+button, .button {
+	width:100%;
+	text-align:center;
+	background-color: #65cc0a;
+	color: white;
+  	text-transform: uppercase;
+  	font-size: 0.9em;
+	border-radius: 5px;
+	border:none;
+	min-width: 75px;
+	min-height: 20px;
+	background-image: linear-gradient(to bottom, #4ba614, #008c00);
+	/*
+	border:0px solid #34740e; -webkit-border-radius: 4px; -moz-border-radius: 4px;border-radius: 4px;font-size:12px;font-family:trebuchet MS, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+ 	background-color: #4ba614;
+ 	background-image: linear-gradient(to bottom, #4ba614, #008c00);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4ba614, endColorstr=#008c00);
+	*/
+}
+
+button:hover, .button:hover {
+	background-color: #4db309;
+	background-image: linear-gradient(to bottom, #36780f, #005900);
+	/*
+	border:1px solid #224b09;
+ 	background-color: #36780f;
+ 	background-image: linear-gradient(to bottom, #36780f, #005900);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#36780f, endColorstr=#005900);
+	*/
+}
+
+#editor button {
+/* 	width:30%; */
+}
+
+#menu button {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}	
+	
+#editor textarea {
+	font-size: 11px;
+	font-family: Lucida Sans Typewriter, Lucida Console, Monaco, monospace, sans-serif;
+}
+
+div.infotext {
+	margin-top: 10px;
+	padding: 5px;
+	background-color: #fff;
+	border-radius: 12px 0px 0px 0px;
+	color: #888;
+}
+
+#header, h1, h2, h3, .tab-header  {
+  font-style: normal;
+  font-size: 1.35em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  }
+  
+.tab-header  {
+  font-size:1.2em;
+  background-color: #333;
+  text-align: center;
+  padding: 0px !important;
+  margin-bottom: 5px;
+  }
+
+
+/* GRAPHICS STYLES */
+
+
+/* set to whatever the body-background-color is */
+.svgSymbol, .packedCircle {
+	stroke: #334;
+    stroke-width: 1.5px;
+    stroke-opacity: 1;
+	fill-opacity: 1; /* settings this here works */
+	fill: #ccc;
+}
+
+/* nodes */
+
+.node circle, .node path {
+  /*fill: #ccc; */ /* firefox+webkit-bug?!: cannot be overridden by Firefox/webkit in SVGs, */
+  /* when using a symbol as use-element -> workaround: set this in parent SVG svgSymbol */
+  /*stroke: #ccc;*/ /* same problem as above, browser still shows this settings although overridden 	*/
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
+
+circle.node.highlighted.identical, /* Without constraining to circle also labels are highlighted */
+.node.highlighted path,
+.node.highlighted circle {
+	stroke: yellow;
+	stroke-width: 3px;
+	vector-effect: non-scaling-stroke;
+	/*filter:url(#blur-effect-2);*/ /* problems in firefox, when not in one html page? */
+	stroke-opacity:1;
+}
+
+.node.highlighted.identical path,
+.node.highlighted.identical circle {
+	stroke: yellow;
+}
+
+/*
+.node:hover, .node.highlighted {
+	stroke: yellow;
+	stroke-width: 10px;
+	stroke-opacity:1;
+}
+
+
+.node.highlighted.identical {
+	stroke: yellow;
+}
+*/
+
+.dragged text, .dragged path { 
+	cursor: move !important; 
+	font-size: 20px; /* seems to have no effect ?! */
+}
+
+.dragged text.nodeLabelShadow, .dragged text.nodeLabel { 
+	/*display:none;*/
+	fill-opacity: 0.1;
+	stroke-opacity: 0.1 !important;
+}
+
+.node--root {
+  /*fill: black;*/
+  /*stroke: black;*/
+}
+
+.node--leaf {
+  /*#fill: white;*/
+}
+
+/* general labels */
+
+.label {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  text-anchor: middle;
+  text-shadow: 0 1px 0 #ccc, 1px 0 0 #ccc, -1px 0 0 #ccc, 0 -1px 0 #ccc;
+  /*text-shadow: 0 1px 2px #fff, 1px 0 2px #fff, -1px 0 2px #fff, 0 -1px 2px #fff;*/
+  /*text-shadow: 0 1px 1.5px #fff, 1px 0 1.5px #fff, -1px 0 1.5px #fff, 0 -1px 1.5px #fff;*/
+}
+
+/* node labels */
+
+.node text { /* strange: "text" alone does not work */
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  fill: black;
+  cursor: pointer;
+  /*pointer-events: none;*/
+}
+
+
+
+text.nodeLabel, text.nodeLabelShadow {
+	font-family: Arial;
+	cursor: pointer;
+}
+
+text.textNode {
+	font-size: 24px;
+	fill: lightgrey;
+	font-family: Georgia, Arial, Verdana;
+	cursor: pointer;
+}
+
+.node text.nodeLabelShadow {
+    stroke: white;
+    stroke-width: 4px;
+    stroke-opacity: .8;
+}
+
+.node.highlighted text.nodeLabelShadow {
+	stroke: yellow;
+	/*filter:url(#blur-effect-2);*/ /* problems in firefox, when not in one html page? */
+	stroke-opacity:.4;
+}
+
+.node.highlighted.identical text.nodeLabelShadow {
+	stroke: yellow;
+	stroke-opacity:.4;
+}
+
+.connectorGroup .label {
+  fill: #555;
+  font-size: 10px;
+  text-anchor: middle;
+  /*text-shadow: 0 1px 0 #ccc, 1px 0 0 #ccc, -1px 0 0 #ccc, 0 -1px 0 #ccc;*/
+  /*visibility: hidden;*/
+}
+
+.connectorGroup .label text {
+  visibility: hidden;
+}
+
+.connectorGroup .label path {
+  /* fill-opacity: 0.6; */ /* setting this value here is interpreted differently in webkit/firefox */
+  transform: scale(0.75); /* TODO: ignored by webkit, only firefox */
+}
+
+.connectorGroup:hover .label {
+  fill: black;
+  font-size: 12px;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+  visibility: visible;
+}
+
+.connectorGroup:hover .linking_connector {
+  stroke: yellow ! important;
+}
+
+/* links and arrows */
+
+.linking_connector {
+	fill: none;
+    stroke: #ccc;
+    stroke-opacity: .6;
+    /*stroke-width:34px;*/ /* for path flow diagrams */
+    stroke-width:10px; /* this stroke-width (7px - 30px) fits well for the marker settings in force-directed-graph, for other sizes layout problems may occur */
+}
+
+.linking_connector.tree {
+  /* stroke-width: 1.5px; */
+}
+
+.linking_connector.highlighted {
+    /*stroke-width: 10px;*/
+    stroke: yellow ! important;
+}
+
+.linking_connector.linkRelative_Distance {
+    /*stroke: #0f0;
+    stroke-opacity: .1;
+    stroke-width:1px;*/
+    visibility: hidden;
+}
+
+marker#linkUndirected {
+    fill: #0000ff;
+}
+
+marker#linkDirected {
+    fill: #00ff00;
+}
+
+marker#link {
+    fill: #ccc;
+}
+
+marker#arrow {
+    fill: #ccc;
+}
+
+
+marker#uml_generalization_arrow {
+	fill: #334;
+    stroke: #ccc;
+    stroke-opacity: 1;
+    stroke-width: 1.5px;
+	vector-effect: non-scaling-stroke;
+	overflow: visible;
+	stroke-linejoin: miter;
+	stroke-linecap: butt;
+	stroke-miterlimit: miter;
+	/*markerUnits: userSpaceOnUse;*/
+	
+}
+
+.haarlinie {
+	stroke:red;
+	vector-effect: non-scaling-stroke;
+	/*shape-rendering: crispEdges; */ /*optimizeSpeed*/
+	stroke-width: 1.5px;
+}

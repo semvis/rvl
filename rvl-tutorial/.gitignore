@@ -1,0 +1,13 @@
+*.DS_Store
+
+target/
+/bin
+
+pom.properties
+/.classpath
+.project
+
+/gen/*.*
+
+ogvic.properties
+/target/
